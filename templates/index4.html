@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Notifications</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io();
+
+            const notificationArea = document.getElementById('notification-area');
+            const subscribeButton = document.getElementById('subscribe-button');
+            const sendNotificationButton = document.getElementById('send-notification-button');
+            const notificationInput = document.getElementById('notification-input');
+
+            subscribeButton.addEventListener('click', () => {
+                socket.emit('subscribe');
+            });
+
+            sendNotificationButton.addEventListener('click', () => {
+                const message = notificationInput.value;
+                socket.emit('send_notification', { message });
+                notificationInput.value = '';
+            });
+
+            socket.on('notification', (data) => {
+                const notificationElement = document.createElement('p');
+                notificationElement.textContent = data.message;
+                notificationArea.appendChild(notificationElement);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Real-Time Notifications</h1>
+    <button id="subscribe-button">Subscribe</button>
+    <input id="notification-input" type="text" placeholder="Enter notification message">
+    <button id="send-notification-button">Send Notification</button>
+    <div id="notification-area" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;"></div>
+</body>
+</html>
